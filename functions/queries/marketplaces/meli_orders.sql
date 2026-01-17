@@ -38,7 +38,7 @@ flattened_items AS (
         JSON_EXTRACT_SCALAR(item, '$.title') as sku_name,
         CAST(JSON_EXTRACT_SCALAR(item, '$.quantity') AS INT64) as quantity,
         JSON_EXTRACT_SCALAR(item, '$.variation_id') as order_item_id
-    FROM enriched_orders,
+    FROM meli_enriched_orders,
     UNNEST(JSON_EXTRACT_ARRAY(items)) as item
 )
 
@@ -65,4 +65,4 @@ SELECT DISTINCT
     TIMESTAMP_ADD(order_created_at, interval 2 day) as shipping_promise_date,
     COALESCE(order_item_id, '') as order_item_id
 FROM flattened_items
-WHERE order_created_at >= timestamp_sub(current_timestamp, interval @lookback_minutes minute);
+WHERE order_creation_timestamp >= timestamp_sub(current_timestamp, interval @lookback_minutes minute);

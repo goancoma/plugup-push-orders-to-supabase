@@ -37,7 +37,7 @@ fala_items_unnested AS (
   UNNEST(JSON_QUERY_ARRAY(items)) as item  -- Use JSON_QUERY_ARRAY instead
 )
 -- Final output matching legacy format
-SELECT 
+SELECT DISTINCT
   'fala' as marketplace,
   CAST(marketplace_order_id AS STRING) as order_id,
   CAST(marketplace_order_id AS STRING) as shipping_id,
@@ -52,4 +52,4 @@ SELECT
   SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', promised_shipping_time) as shipping_promise_date,
   order_item_id
 FROM fala_items_unnested
-WHERE order_created_at >= timestamp_sub(current_timestamp, interval @lookback_minutes minute);
+WHERE order_creation_timestamp >= timestamp_sub(current_timestamp, interval @lookback_minutes minute);
