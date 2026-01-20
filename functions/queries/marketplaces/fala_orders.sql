@@ -49,7 +49,7 @@ SELECT DISTINCT
   sku_name,
   COALESCE(quantity, 1) as quantity,
   order_created_at,
-  SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', promised_shipping_time) as shipping_promise_date,
+  order_created_at as shipping_promise_date,
   order_item_id
 FROM fala_items_unnested
 WHERE order_creation_timestamp >= timestamp_sub(current_timestamp, interval @lookback_minutes minute);
