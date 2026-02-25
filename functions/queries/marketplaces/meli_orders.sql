@@ -18,7 +18,8 @@ meli_enriched_orders AS (
         JSON_EXTRACT_SCALAR(custom_fields, '$.pack_id') as pack_id,
         processed_at as order_creation_timestamp,
         items,
-        JSON_EXTRACT_SCALAR(shipping_info, '$.logistic_type') as raw_logistic_type
+        JSON_EXTRACT_SCALAR(shipping_info, '$.logistic_type') as raw_logistic_type,
+        company_id
     FROM raw_enriched_orders
     WHERE marketplace = 'MELI'
 ),
@@ -33,6 +34,7 @@ flattened_items AS (
         delivery_promise,
         order_creation_timestamp,
         raw_logistic_type,
+        company_id,
         JSON_EXTRACT_SCALAR(item, '$.seller_sku') as seller_sku,
         JSON_EXTRACT_SCALAR(item, '$.marketplace_item_id') as market_place_match_id,
         JSON_EXTRACT_SCALAR(item, '$.title') as sku_name,
@@ -63,6 +65,7 @@ SELECT DISTINCT
     quantity,
     order_created_at,
     TIMESTAMP_ADD(order_created_at, interval 2 day) as shipping_promise_date,
-    COALESCE(order_item_id, '') as order_item_id
+    COALESCE(order_item_id, '') as order_item_id,
+    company_id
 FROM flattened_items
 WHERE order_creation_timestamp >= timestamp_sub(current_timestamp, interval @lookback_minutes minute);

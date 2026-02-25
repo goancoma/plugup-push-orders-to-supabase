@@ -17,7 +17,8 @@ cenc_orders AS (
     order_created_at,
     JSON_QUERY_ARRAY(items) as items_array,
     JSON_EXTRACT_SCALAR(shipping_info, '$.carrier') as order_level_carrier,
-    JSON_EXTRACT_SCALAR(custom_fields, '$.webhook_seller_id') as seller_id
+    JSON_EXTRACT_SCALAR(custom_fields, '$.webhook_seller_id') as seller_id,
+    company_id
   FROM raw_enriched_orders
   WHERE marketplace = 'CENC'
     AND processed_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), interval @lookback_minutes minute)
@@ -28,6 +29,7 @@ cenc_items_unnested AS (
     order_status,
     order_created_at,
     seller_id,
+    company_id,
     JSON_EXTRACT_SCALAR(item, '$.order_item_id') as order_item_id,
     JSON_EXTRACT_SCALAR(item, '$.carrier') as logistic_type,
     JSON_EXTRACT_SCALAR(item, '$.status_name') as status,
@@ -55,6 +57,7 @@ SELECT
   COALESCE(quantity, 1) as quantity,
   order_created_at,
   TIMESTAMP(shipping_promise_date) as shipping_promise_date,
-  order_item_id
+  order_item_id,
+  company_id
 FROM cenc_items_unnested
 ORDER BY order_created_at DESC, order_item_id;

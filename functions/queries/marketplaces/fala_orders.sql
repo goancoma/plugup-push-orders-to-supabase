@@ -16,7 +16,8 @@ fala_enriched_orders AS (
     JSON_EXTRACT_SCALAR(shipping_info, '$.shipment_provider') as shipment_provider,
     JSON_EXTRACT_SCALAR(shipping_info, '$.promised_shipping_time') as promised_shipping_time,
     items,
-    processed_at as order_creation_timestamp
+    processed_at as order_creation_timestamp,
+    company_id
   FROM raw_enriched_orders
   WHERE marketplace = 'FALA'
 ),
@@ -27,6 +28,7 @@ fala_items_unnested AS (
     order_created_at,
     shipment_provider,
     promised_shipping_time,
+    company_id,
     JSON_EXTRACT_SCALAR(item, '$.seller_sku') as seller_sku,
     JSON_EXTRACT_SCALAR(item, '$.marketplace_sku') as marketplace_sku,
     JSON_EXTRACT_SCALAR(item, '$.title') as sku_name,
@@ -50,6 +52,7 @@ SELECT DISTINCT
   COALESCE(quantity, 1) as quantity,
   order_created_at,
   COALESCE(TIMESTAMP(promised_shipping_time), order_created_at) as shipping_promise_date,
-  order_item_id
+  order_item_id,
+  company_id
 FROM fala_items_unnested
 WHERE order_creation_timestamp >= timestamp_sub(current_timestamp, interval @lookback_minutes minute);

@@ -22,7 +22,8 @@ SELECT DISTINCT
     cast(t.orderLineQuantity.amount as int64) as quantity,
     timestamp_millis(orderDate) as order_created_at,
     timestamp_millis(shippingInfo.estimatedShipDate) as shipping_promise_date,
-    '' as order_item_id
+    '' as order_item_id,
+    'bamo_company' as company_id
 FROM walmart_orders,
 UNNEST(orderLines.orderLine) AS t,
 UNNEST(t.orderLineStatuses.orderLineStatus) AS t2

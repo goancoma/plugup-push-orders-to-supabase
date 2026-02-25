@@ -62,6 +62,7 @@ class OrderTransformerService:
             "market_place": str(first_row['marketplace']),
             "order_created_at": order_created_iso,
             "shipping_promise_date": shipping_promise_iso,  # Can be None - webhook handler will handle it
+            "client_id": str(first_row['company_id']),
             "sku": sku_dict
         }
     
