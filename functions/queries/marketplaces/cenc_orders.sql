@@ -51,7 +51,7 @@ SELECT
   COALESCE(logistic_type, 'Unknown') as logistic_type,
   COALESCE(status, order_status) as status,
   "active" as shipping_status,
-  seller_sku,
+  REGEXP_REPLACE(seller_sku, '-1$', '') as seller_sku,
   marketplace_product_id as market_place_match_id,
   sku_name,
   COALESCE(quantity, 1) as quantity,
