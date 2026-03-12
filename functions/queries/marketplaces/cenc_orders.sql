@@ -41,7 +41,7 @@ cenc_items_unnested AS (
     JSON_EXTRACT_SCALAR(item, '$.marketplace_product_id') as marketplace_product_id,
     -- Now populated from sub_order.items[].name
     JSON_EXTRACT_SCALAR(item, '$.product_name') as sku_name,
-    JSON_EXTRACT_SCALAR(item, '$.sub_order_number') as sub_order_number
+    JSON_EXTRACT_SCALAR(item, '$.sub_order_id') as sub_order_number
   FROM cenc_orders,
   UNNEST(items_array) as item
 )
