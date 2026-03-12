@@ -40,14 +40,15 @@ cenc_items_unnested AS (
     -- Now populated from sub_order.items[].sku
     JSON_EXTRACT_SCALAR(item, '$.marketplace_product_id') as marketplace_product_id,
     -- Now populated from sub_order.items[].name
-    JSON_EXTRACT_SCALAR(item, '$.product_name') as sku_name
+    JSON_EXTRACT_SCALAR(item, '$.product_name') as sku_name,
+    JSON_EXTRACT_SCALAR(item, '$.sub_order_number') as sub_order_number
   FROM cenc_orders,
   UNNEST(items_array) as item
 )
 SELECT 
   'cenc' as marketplace,
   CAST(marketplace_order_id AS STRING) as order_id,
-  CAST(marketplace_order_id AS STRING) as shipping_id,
+  CAST(sub_order_number AS STRING) as shipping_id,
   COALESCE(logistic_type, 'Unknown') as logistic_type,
   COALESCE(status, order_status) as status,
   "active" as shipping_status,
