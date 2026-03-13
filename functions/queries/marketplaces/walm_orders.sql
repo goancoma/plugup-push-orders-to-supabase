@@ -12,7 +12,7 @@ WITH walmart_orders as (
 SELECT DISTINCT
     'walm' as marketplace,
     cast(customerOrderId as string) as order_id,
-    cast(t2.trackingInfo.shipmentNo as string) as shipping_id,
+    cast(purchaseOrderId as string) as shipping_id,
     shippingInfo.methodCode as logistic_type,
     t2.status,
     t2.trackingInfo.packageStatus as shipping_status,
@@ -22,7 +22,7 @@ SELECT DISTINCT
     cast(t.orderLineQuantity.amount as int64) as quantity,
     timestamp_millis(orderDate) as order_created_at,
     timestamp_millis(shippingInfo.estimatedShipDate) as shipping_promise_date,
-    '' as order_item_id,
+    cast(purchaseOrderId as string) as order_item_id,
     'bamo_company' as company_id
 FROM walmart_orders,
 UNNEST(orderLines.orderLine) AS t,
